@@ -2,8 +2,8 @@
 // 流动性代币逻辑
 pragma solidity ^0.8.20;
 
-import "@openzeppelin-contracts/utils/math/Math.sol";
 import "./interfaces/IUniswapV2ERC20.sol";
+import "./libraries/SafeMath";
 
 contract UniswapV2ERC20 is IUniswapV2ERC20 {
     using SafeMath for uint;

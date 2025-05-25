@@ -12,12 +12,12 @@ contract AMMFactory is IUniswapV2Factory {
     mapping(address => mapping(address => address)) public getPair;
     address[] public allPairs;
 
-    event PairCreated(
-        address indexed token,
-        address indexed token1,
-        address pair,
-        uint
-    );
+    // event PairCreated(
+    //     address indexed token,
+    //     address indexed token1,
+    //     address pair,
+    //     uint
+    // );
 
     constructor(address _feeToSetter) public {
         feeToSetter = _feeToSetter;
@@ -31,13 +31,13 @@ contract AMMFactory is IUniswapV2Factory {
         address tokenA,
         address tokenB
     ) external returns (address pair) {
-        require(tokenA != tokenB, "UniswapV2:INDETICAL_ADDRESSES");
+        require(tokenA != tokenB, "AMMPair:INDETICAL_ADDRESSES");
         (address token0, address token1) = tokenA < tokenB
             ? (tokenA, tokenB)
             : (tokenB, tokenA);
-        require(token0 != address(0), "UniswapV2:ZERO_ADDRESS");
-        require(getPair[token0][token1] == address(0), "UniswapV2:PAIR_EXISTS");
-        bytes memory bytecode = type(UniswapV2Pair).creationCode;
+        require(token0 != address(0), "AMMPair:ZERO_ADDRESS");
+        require(getPair[token0][token1] == address(0), "AMMPair:PAIR_EXISTS");
+        bytes memory bytecode = type(AMMPair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
             pair := create2(0, add(bytecode, 32), mload(bytecode), salt)
@@ -50,12 +50,12 @@ contract AMMFactory is IUniswapV2Factory {
     }
 
     function setFeeTo(address _feeTo) external {
-        require(msg.sender == feeToSetter, "UniswapV2:FORBIDDEN");
+        require(msg.sender == feeToSetter, "AMMPair:FORBIDDEN");
         feeTo = _feeTo;
     }
 
     function setFeeToSetter(address _feeToSetter) external {
-        require(msg.sender == feeToSetter, "UniswapV2:FORBIDDEN");
+        require(msg.sender == feeToSetter, "AMMPair:FORBIDDEN");
         feeToSetter = _feeToSetter;
     }
 }

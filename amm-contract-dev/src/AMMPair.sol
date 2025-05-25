@@ -32,7 +32,7 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
 
     uint private unlocked = 1;
     modifier lock() {
-        require(unlocked == 1, "UniswapV2: LOCKED");
+        require(unlocked == 1, "AMMPair: LOCKED");
         unlocked = 0;
         _;
         unlocked = 1;
@@ -57,34 +57,34 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
             abi.encodeWithSelector(SELECTOR, to, value)
         );
         require(
-            success && (data.length == 0 || abi.encode(data, (bool))),
-            "UniswapV2:TRANSFER_FAILED"
+            success && (data.length == 0 || abi.decode(data, (bool))),
+            "AMMPair: TRANSFER_FAILED"
         );
     }
 
-    event Mint(address indexed sender, uint amount0, uint amount1);
-    event Burn(
-        address indexed sender,
-        uint amount0,
-        uint amount1,
-        address indexed to
-    );
-    event Swap(
-        address indexed sender,
-        uint amount0In,
-        uint amount1In,
-        uint amount0Out,
-        uint amount1Out,
-        address indexed to
-    );
-    event Sync(uint112 reserve0, uint112 reserve1);
+    // event Mint(address indexed sender, uint amount0, uint amount1);
+    // event Burn(
+    //     address indexed sender,
+    //     uint amount0,
+    //     uint amount1,
+    //     address indexed to
+    // );
+    // event Swap(
+    //     address indexed sender,
+    //     uint amount0In,
+    //     uint amount1In,
+    //     uint amount0Out,
+    //     uint amount1Out,
+    //     address indexed to
+    // );
+    // event Sync(uint112 reserve0, uint112 reserve1);
 
     constructor() public {
         factory = msg.sender;
     }
 
     function initialize(address _token0, address _token1) external {
-        require(msg.sender == factory, "UniswapV2:FORBIDDEN");
+        require(msg.sender == factory, "AMMPair:FORBIDDEN");
         token0 = _token0;
         token1 = _token1;
     }
@@ -97,7 +97,7 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
     ) private {
         require(
             balance0 <= uint112(-1) && balance1 <= uint112(-1),
-            "UniswapV2:OVERFLOW"
+            "AMMPair:OVERFLOW"
         );
         uint32 blockTimestamp = uint32(block.timestamp % 2 ** 32);
         uint32 timeElapsed = blockTimestamp - blockTimestampLast;
@@ -129,6 +129,7 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
                 if (rootK > rootKLast) {
                     uint numerator = totalSupply.mul(rootK.sub(rootKLast));
                     uint denominator = rootK.mul(5).add(rootKLast);
+                    uint liquidity = numerator / denominator;
                     if (liquidity > 0) {
                         _mint(feeTo, liquidity);
                     }
@@ -157,7 +158,7 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
                 amount1.mul(_totalSupply) / reserve1
             );
         }
-        require(liquidity > 0, "UniswapV2:INSUFFICIENT_LIQUIDITY_MINTED");
+        require(liquidity > 0, "AMMPair:INSUFFICIENT_LIQUIDITY_MINTED");
         _mint(to, liquidity);
 
         _update(balance0, balance1, _reserve0, _reserve1);
@@ -177,13 +178,13 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
         uint balance1 = IERC20(_token1).balanceOf(address(this));
         uint liquididity = balanceOf[address(this)];
 
-        bool feeOn = _mint(_reserve0, _reserve1);
+        bool feeOn = _mintFee(_reserve0, _reserve1);
         uint _totalSupply = totalSupply;
         amount0 = liquididity.mul(balance0);
         amount1 = liquididity.mul(balance1);
         require(
-            amount0 > 0 && amount1,
-            "UniswapV2:INSUFFICIENT_LIQUIDITY_BURNED"
+            amount0 > 0 && amount1 > 0,
+            "AMMPair:INSUFFICIENT_LIQUIDITY_BURNED"
         );
         _burn(address(this), liquididity);
         _safeTransfer(_token0, to, amount0);
@@ -206,12 +207,12 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
     ) external lock {
         require(
             amount0Out > 0 || amount1Out > 0,
-            "UniswapV2:INSUFFCIENT_OUTPUT_AMOUNT"
+            "AMMPair:INSUFFCIENT_OUTPUT_AMOUNT"
         );
         (uint112 _reserve0, uint112 _reserve1, ) = getReserves();
         require(
             amount0Out < _reserve0 && amount1Out < _reserve1,
-            "UniswapV2:INSUFFCIENT_LIQUIDITY"
+            "AMMPair:INSUFFCIENT_LIQUIDITY"
         );
 
         uint balance0;
@@ -221,7 +222,7 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
             address _token0 = token0;
             address _token1 = token1;
 
-            require(to != _token0 && to != _token1, "UniswapV2:INVALID_TO");
+            require(to != _token0 && to != _token1, "AMMPair:INVALID_TO");
             if (amount0Out > 0) {
                 _safeTransfer(_token0, to, amount0Out);
             }
@@ -249,7 +250,7 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
 
         require(
             amount0In > 0 || amount1In > 0,
-            "UniswapV2:INSUFFICIENT_INPUT_AMOUNT"
+            "AMMPair:INSUFFICIENT_INPUT_AMOUNT"
         );
         {
             uint balance0adjusted = balance0.mul(1000).sub(amount0In.mul(3));
@@ -257,7 +258,7 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
             require(
                 balance0adjusted.mul(balance1adjusted) >=
                     uint(_reserve0).mul(_reserve1).mul(1000 ** 2),
-                "UniswapV2:k"
+                "AMMPair:k"
             );
         }
 
@@ -288,4 +289,7 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
             reserve1
         );
     }
+
+    function DOMAIN_SEPARATOR() external view override returns (bytes32){}
+    function PERMIT_TYPEHASH() external pure override returns (bytes32){}
 }

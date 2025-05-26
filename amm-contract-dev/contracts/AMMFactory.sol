@@ -27,16 +27,11 @@ contract AMMFactory is IUniswapV2Factory {
         return allPairs.length;
     }
 
-    function createPair(
-        address tokenA,
-        address tokenB
-    ) external returns (address pair) {
-        require(tokenA != tokenB, "AMMPair:INDETICAL_ADDRESSES");
-        (address token0, address token1) = tokenA < tokenB
-            ? (tokenA, tokenB)
-            : (tokenB, tokenA);
-        require(token0 != address(0), "AMMPair:ZERO_ADDRESS");
-        require(getPair[token0][token1] == address(0), "AMMPair:PAIR_EXISTS");
+    function createPair(address tokenA, address tokenB) external returns (address pair) {
+        require(tokenA != tokenB, 'AMMUniswapV2: IDENTICAL_ADDRESSES');
+        (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
+        require(token0 != address(0), 'AMMUniswapV2: ZERO_ADDRESS');
+        require(getPair[token0][token1] == address(0), 'AMMUniswapV2: PAIR_EXISTS'); // single check is sufficient
         bytes memory bytecode = type(AMMPair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
@@ -50,12 +45,12 @@ contract AMMFactory is IUniswapV2Factory {
     }
 
     function setFeeTo(address _feeTo) external {
-        require(msg.sender == feeToSetter, "AMMPair:FORBIDDEN");
+        require(msg.sender == feeToSetter, 'AMMUniswapV2: FORBIDDEN');
         feeTo = _feeTo;
     }
 
     function setFeeToSetter(address _feeToSetter) external {
-        require(msg.sender == feeToSetter, "AMMPair:FORBIDDEN");
+        require(msg.sender == feeToSetter, 'AMMUniswapV2: FORBIDDEN');
         feeToSetter = _feeToSetter;
     }
 }

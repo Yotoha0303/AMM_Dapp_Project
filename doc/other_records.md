@@ -9,3 +9,7 @@ Uniswap V2白皮书
 Curve白皮书
 Uniswap V3白皮书
 https://docs.openzeppelin.com/
+
+[Q (number format) - Wikipedia](https://en.wikipedia.org/wiki/Q_(number_format))
+
+https://github.com/33357/smartcontract-apps

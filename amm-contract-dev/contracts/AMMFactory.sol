@@ -12,13 +12,6 @@ contract AMMFactory is IUniswapV2Factory {
     mapping(address => mapping(address => address)) public getPair;
     address[] public allPairs;
 
-    // event PairCreated(
-    //     address indexed token,
-    //     address indexed token1,
-    //     address pair,
-    //     uint
-    // );
-
     constructor(address _feeToSetter) public {
         feeToSetter = _feeToSetter;
     }

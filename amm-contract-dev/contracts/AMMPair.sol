@@ -2,10 +2,9 @@
 // 核心交易对逻辑（兑换、储备更新）
 pragma solidity ^0.8.20;
 
-// import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 import './interfaces/IUniswapV2Pair.sol';
 import './UniswapV2ERC20.sol';
-import './libraries/Math.sol';
 import './libraries/UQ112x112.sol';
 import './interfaces/IUniswapV2Factory.sol';
 import './interfaces/IUniswapV2Callee.sol';
@@ -47,18 +46,6 @@ contract AMMPair is IUniswapV2Pair, UniswapV2ERC20 {
         (bool success, bytes memory data) = token.call(abi.encodeWithSelector(SELECTOR, to, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))), 'AMMUniswapV2: TRANSFER_FAILED');
     }
-
-    // event Mint(address indexed sender, uint amount0, uint amount1);
-    // event Burn(address indexed sender, uint amount0, uint amount1, address indexed to);
-    // event Swap(
-    //     address indexed sender,
-    //     uint amount0In,
-    //     uint amount1In,
-    //     uint amount0Out,
-    //     uint amount1Out,
-    //     address indexed to
-    // );
-    // event Sync(uint112 reserve0, uint112 reserve1);
 
     constructor() public {
         factory = msg.sender;

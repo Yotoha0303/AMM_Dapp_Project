@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract StakingRewards is ReentrancyGuard {
     IERC20 public rewardsToken; //DexToken
-    IERC20 public stakingToken; //UniswapV2Pair
+    IERC20 public stakingToken; //AMMPair
     uint256 public rewardRate; // The speed of rewards per second
     uint256 public lastUpdateTime;
     uint256 public rewardPerTokenStored;

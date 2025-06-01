@@ -3,13 +3,15 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 
+import AMMUniswap from "./components/AMMUniswap";
+
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <>
       <div>
-        <h1 class="text-3xl font-bold underline">Hello AMM</h1>
+        <AMMUniswap></AMMUniswap>
       </div>
     </>
   );

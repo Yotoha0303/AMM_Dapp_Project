@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.20;
 
-import "../contracts/StakingRewards.sol";
+import "../contracts/UniswapV2ERC20.t.sol";
 import "forge-std/Test.sol";
 
-contract StakingRewards is Test {
+contract UniswapV2ERC20 is Test {
 
     function setUp(){
         // new aToken(0);

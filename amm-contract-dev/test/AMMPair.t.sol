@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.20;
 
-import "../contracts/AMMPair.sol";
-import "forge-std/Test.sol";
+import {AMMPair} from "../contracts/AMMPair.sol";
+import {Test} from "forge-std/Test.sol";
 
-contract AMMPair is Test {
+contract AMMPairTest is Test {
+    AMMPair public ap;
 
-
-    function setUp(){
+    function setUp() public{
         // new aToken(0);
 
     }

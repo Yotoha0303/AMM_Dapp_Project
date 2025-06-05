@@ -2,12 +2,13 @@
 
 pragma solidity ^0.8.20;
 
-import "../contracts/StakingRewards.sol";
-import "forge-std/Test.sol";
+import {StakingRewards} from "../contracts/StakingRewards.sol";
+import {Test} from "forge-std/Test.sol";
 
-contract StakingRewards is Test {
+contract StakingRewardsTest is Test {
+    StakingRewards public sr;
 
-    function setUp(){
+    function setUp() public{
         // new aToken(0);
 
     }

@@ -2,12 +2,13 @@
 
 pragma solidity ^0.8.20;
 
-import "../contracts/AMMFactory.sol";
-import "forge-std/Test.sol";
+import {AMMFactory} from "../contracts/AMMFactory.sol";
+import {Test} from "forge-std/Test.sol";
 
-contract AMMFactory is Test {
+contract AMMFactoryTest is Test {
+    AMMFactory public af;
 
-    function setUp(){
+    function setUp() public{
         // new aToken(0);
 
     }

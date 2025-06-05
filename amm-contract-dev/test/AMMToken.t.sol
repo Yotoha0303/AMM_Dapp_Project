@@ -2,14 +2,14 @@
 
 pragma solidity ^0.8.20;
 
-import "../contracts/AMMToken.sol";
-import "forge-std/Test.sol";
+import {AMMToken} from "../contracts/AMMToken.sol";
+import {Test} from "forge-std/Test.sol";
 
-contract AMMToken is Test {
+contract AMMTokenTest is Test {
 
     AMMToken public aToken;
 
-    function setUp(){
+    function setUp() public{
         // new aToken(0);
 
     }
